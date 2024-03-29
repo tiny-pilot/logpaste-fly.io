@@ -6,17 +6,19 @@ processes = []
 
 [env]
   PORT = "8080"
-  PS_BEHIND_PROXY = "yes"
-  SITE_TITLE = "TinyPilot Log Sharing Service"
-  SITE_SUBTITLE = "Simple storage for TinyPilot debug logs"
-  SITE_SHOW_DOCUMENTATION = "false"
+  LP_BEHIND_PROXY = "yes"
 
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
+  cmd = [
+    "-title", "TinyPilot Log Sharing Service",
+    "-subtitle", "Simple storage for TinyPilot debug logs",
+    "-showdocs=false",
+    ]
 
 [build]
-  image = "mtlynch/logpaste:0.2.9"
+  image = "mtlynch/logpaste:0.3.0"
 
 [[services]]
   http_checks = []
