@@ -11,8 +11,6 @@ This repo controls deployments to TinyPilot's LogPaste instance on Fly.io.
 
 TinyPilot uses LogPaste to accept debug logs from TinyPilot users.
 
-As of 2024-02-20, this repo is not yet TinyPilot's production LogPaste server, but we are migrating to Fly, and this will become our production server.
-
 ## Updating LogPaste versions
 
 To update to a new version of LogPaste, create a PR that updates the version of the `build.image` property within the `fly.toml` file.
