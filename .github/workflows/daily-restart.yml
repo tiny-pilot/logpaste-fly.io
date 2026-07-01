@@ -1,0 +1,14 @@
+name: Daily restart for log retention
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  restart:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -L https://fly.io/install.sh | sh
+          ~/.fly/bin/flyctl apps restart logpaste-tinypilot \
+            --access-token "${{ secrets.FLY_ACCESS_TOKEN }}"
