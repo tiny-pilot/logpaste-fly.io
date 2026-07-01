@@ -3,7 +3,7 @@ FROM mtlynch/logpaste:${LOGPASTE_VERSION}
 
 RUN apk add --no-cache sqlite
 
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+COPY docker-entrypoint /app/docker-entrypoint
+RUN chmod +x /app/docker-entrypoint
 
 ENTRYPOINT ["/app/docker-entrypoint"]
