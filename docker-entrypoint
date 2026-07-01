@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+
+is_litestream_enabled() {
+  set +ux
+
+  local IS_ENABLED='false'
+
+  if [[ -n "${DB_REPLICA_URL}" ]]; then
+    IS_ENABLED='true';
+  fi
+
+  set -ux
+
+  echo "${IS_ENABLED}"
+}
+
+IS_LITESTREAM_ENABLED="$(is_litestream_enabled)"
+readonly IS_LITESTREAM_ENABLED
+
+set -x
+
+LP_LAUNCH_CMD="/app/logpaste"
+for arg in "$@"; do
+  LP_LAUNCH_CMD="${LP_LAUNCH_CMD} $(printf '%q' "$arg")"
+done
+
+if [[ "${IS_LITESTREAM_ENABLED}" == 'true' ]]; then
+  /app/litestream version
+  echo "DB_REPLICA_URL=${DB_REPLICA_URL}"
+
+  readonly DB_PATH='/app/data/store.db'
+  export DB_PATH
+
+  if [[ -f "$DB_PATH" ]]; then
+    echo "Existing database is $(stat -c %s "${DB_PATH}") bytes"
+  else
+    echo "No existing database found"
+    /app/litestream restore -if-replica-exists -v "${DB_PATH}"
+  fi
+
+  if [[ -n "${LP_RETENTION_DAYS:-}" ]] && [[ -f "${DB_PATH}" ]]; then
+    deleted=$(sqlite3 "${DB_PATH}" "
+      DELETE FROM entries
+      WHERE creation_time < strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '-${LP_RETENTION_DAYS} days');
+      SELECT changes();
+    ")
+    echo "retention: deleted ${deleted} entries older than ${LP_RETENTION_DAYS} days"
+  fi
+
+  /app/litestream replicate \
+    -exec "${LP_LAUNCH_CMD}"
+else
+  echo "Starting without litestream"
+  eval "exec ${LP_LAUNCH_CMD}"
+fi
