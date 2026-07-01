@@ -7,6 +7,7 @@ processes = []
 [env]
   PORT = "8080"
   LP_BEHIND_PROXY = "yes"
+  LP_RETENTION_DAYS = "3"
   LITESTREAM_REGION = "us-west-000"
   DB_REPLICA_URL = "s3://logs-tinypilotkvm-com.s3.us-west-000.backblazeb2.com"
 
@@ -20,7 +21,7 @@ processes = []
     ]
 
 [build]
-  image = "mtlynch/logpaste:0.3.1"
+  dockerfile = "Dockerfile"
 
 [[services]]
   http_checks = []
