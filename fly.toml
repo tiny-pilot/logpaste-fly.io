@@ -10,6 +10,11 @@ processes = []
   LP_RETENTION_DAYS = "3"
   LITESTREAM_REGION = "us-west-000"
   DB_REPLICA_URL = "s3://logs-tinypilotkvm-com.s3.us-west-000.backblazeb2.com"
+  
+[mounts]
+  source = "logpaste_data"
+  destination = "/app/data"
+
 
 [experimental]
   allowed_public_ports = []
